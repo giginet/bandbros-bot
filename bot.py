@@ -7,8 +7,10 @@ import urllib2
 import urlparse
 import datetime
 import re
-
 import itertools
+import ConfigParser
+
+import tweepy
 from lxml.html import fromstring
 
 BASE_URL = r'http://bandbros-p.nintendo.co.jp'
@@ -54,19 +56,41 @@ class Scraper(object):
 class BandBrosBot(object):
 
     CACHE = 'cache.dat'
+    MAX_RELEASES = 10
+    CONFIG_PATH = r'twitter.conf'
+    CONFIG_SECTION = r'Twitter'
 
     def __init__(self):
         self.parser = Scraper()
         cache = open(self.CACHE, 'a+')
         cache.close()
 
+        keys = self._parse_config(self.CONFIG_PATH)
+        auth = tweepy.OAuthHandler(*keys[:2])
+        auth.set_access_token(*keys[2:])
+        self.tw = tweepy.API(auth)
+
+    def _parse_config(self, config_path):
+        config = ConfigParser.ConfigParser()
+        config.read(config_path)
+        keys = map(lambda option: config.get(self.CONFIG_SECTION, option), config.options(self.CONFIG_SECTION))
+        return keys
+
+    def _tweet_release(self, release):
+        text = "NEW RELEASE : %(title)s (%(author)s) %(url)s" % {'title' : release.title, 'author' : release.author, 'url' : release.url}
+        self.tw.update_status(text)
+        print text
+
     def check_new_release(self):
         releases = self.parser.releases
         def is_not_release(release):
             return not self._is_released(release.id)
-        for release in itertools.takewhile(is_not_release, releases):
+        new = list(itertools.takewhile(is_not_release, releases))
+        new = new[:self.MAX_RELEASES]
+        new.reverse()
+        for release in new:
             self._write_cache(release.id)
-            print release
+            self._tweet_release(release)
 
     def _write_cache(self, id):
         cache = open(self.CACHE, 'a+')

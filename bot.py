@@ -8,7 +8,7 @@ import urlparse
 import datetime
 import re
 
-import lxml
+import itertools
 from lxml.html import fromstring
 
 BASE_URL = r'http://bandbros-p.nintendo.co.jp'
@@ -51,8 +51,37 @@ class Scraper(object):
         release_elems = dom.cssselect('table.rankList tr')[1:]
         self.releases = [Release(tr) for tr in release_elems]
 
+class BandBrosBot(object):
+
+    CACHE = 'cache.dat'
+
+    def __init__(self):
+        self.parser = Scraper()
+        cache = open(self.CACHE, 'a+')
+        cache.close()
+
+    def check_new_release(self):
+        releases = self.parser.releases
+        def is_not_release(release):
+            return not self._is_released(release.id)
+        for release in itertools.takewhile(is_not_release, releases):
+            self._write_cache(release.id)
+            print release
+
+    def _write_cache(self, id):
+        cache = open(self.CACHE, 'a+')
+        cache.write('%s\n' % id)
+        cache.close()
+
+    def _is_released(self, id):
+        cache = open(self.CACHE, 'r')
+        for line in cache.readlines():
+            if str(id) == line.strip():
+                cache.close()
+                return True
+        cache.close()
+        return False
 
 if __name__ == '__main__':
-    scp = Scraper()
-    #for release in scp.releases:
-        #print release
+    bot = BandBrosBot()
+    bot.check_new_release()

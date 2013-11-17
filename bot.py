@@ -49,7 +49,7 @@ class Scraper(object):
 
     def __init__(self):
         html = urllib2.urlopen(self.SOURCE_URL).read()
-        dom = fromstring(html)
+        dom = fromstring(unicode(html, 'utf-8'))
         release_elems = dom.cssselect('table.rankList tr')[1:]
         self.releases = [Release(tr) for tr in release_elems]
 

@@ -89,8 +89,11 @@ class BandBrosBot(object):
         new = new[:self.MAX_RELEASES]
         new.reverse()
         for release in new:
-            self._write_cache(release.id)
-            self._tweet_release(release)
+            try:
+                self._tweet_release(release)
+                self._write_cache(release.id)
+            except:
+                pass
 
     def _write_cache(self, id):
         cache = open(self.CACHE, 'a+')

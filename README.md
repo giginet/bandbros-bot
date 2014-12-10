@@ -18,3 +18,17 @@ $ export ACCESS_TOKEN_SECRET=dddddddd
 $ pip install -r requirements.txt
 $ ./bin/notify_new_release
 ```
+
+HerokuへDeployする
+===================
+
+```sh
+$ heroku login
+$ heroku create
+$ heroku addons:add scheduler:standard
+$ heroku config:add CONSUMER_KEY=aaaaaaaaaa      
+$ heroku config:add CONSUMER_SECRET=bbbbbbb
+$ heroku config:add ACCESS_TOKEN_KEY=ccccccc     
+$ heroku config:add ACCESS_TOKEN_SECRET=dddddddd 
+$ git push heroku master
+```

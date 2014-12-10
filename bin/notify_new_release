@@ -72,12 +72,11 @@ class BandBrosBot(object):
         self.tw = tweepy.API(auth)
 
     def _parse_config(self, config_path):
-        keys = {
-                'consumer_key': os.environ['CONSUMER_KEY'],
-                'consumer_secret': os.environ['CONSUMER_SECRET'],
-                'access_token_key': os.environ['ACCESS_TOKEN_KEY'],
-                'access_token_secret': os.environ['ACCESS_TOKEN_SECRET'],
-        }
+        keys = (os.environ['CONSUMER_KEY'],
+                os.environ['CONSUMER_SECRET'],
+                os.environ['ACCESS_TOKEN_KEY'],
+                os.environ['ACCESS_TOKEN_SECRET']
+        )
         return keys
 
     def _tweet_release(self, release):

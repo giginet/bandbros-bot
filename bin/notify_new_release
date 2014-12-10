@@ -10,7 +10,6 @@ import urlparse
 import datetime
 import re
 import itertools
-import ConfigParser
 
 import tweepy
 from lxml.html import fromstring
@@ -73,9 +72,12 @@ class BandBrosBot(object):
         self.tw = tweepy.API(auth)
 
     def _parse_config(self, config_path):
-        config = ConfigParser.ConfigParser()
-        config.read(config_path)
-        keys = map(lambda option: config.get(self.CONFIG_SECTION, option), config.options(self.CONFIG_SECTION))
+        keys = {
+                'consumer_key': os.environ['CONSUMER_KEY'],
+                'consumer_secret': os.environ['CONSUMER_SECRET'],
+                'access_token_key': os.environ['ACCESS_TOKEN_KEY'],
+                'access_token_secret': os.environ['ACCESS_TOKEN_SECRET'],
+        }
         return keys
 
     def _tweet_release(self, release):

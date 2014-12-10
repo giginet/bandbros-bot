@@ -3,6 +3,7 @@
 # created by giginet on 2013/11/15
 #
 __author__ = 'giginet'
+import os
 import urllib2
 import urlparse
 import datetime
@@ -54,8 +55,8 @@ class Scraper(object):
         self.releases = [Release(tr) for tr in release_elems]
 
 class BandBrosBot(object):
-
-    CACHE = 'cache.dat'
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    CACHE = os.path.join(basedir, 'cache.dat')
     MAX_RELEASES = 10
     CONFIG_PATH = r'twitter.conf'
     CONFIG_SECTION = r'Twitter'
@@ -79,7 +80,6 @@ class BandBrosBot(object):
     def _tweet_release(self, release):
         text = "NEW RELEASE : %(title)s (%(author)s) %(url)s" % {'title' : release.title, 'author' : release.author, 'url' : release.url}
         self.tw.update_status(text)
-        print text
 
     def check_new_release(self):
         releases = self.parser.releases

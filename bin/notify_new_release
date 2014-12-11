@@ -56,7 +56,8 @@ class Scraper(object):
 
 class BandBrosBot(object):
     basedir = os.path.abspath(os.path.dirname(__file__))
-    CACHE = os.path.join(basedir, 'cache.dat')
+    tmpdir = os.path.join(basedir, '../', 'tmp')
+    CACHE = os.path.join(tmpdir, 'cache.dat')
     MAX_RELEASES = 10
     CONFIG_PATH = r'twitter.conf'
     CONFIG_SECTION = r'Twitter'
